@@ -1,7 +1,10 @@
+using BLLManage.Application.Companies.CreateCompany;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Services
 builder.Services.AddControllers();
+builder.Services.AddScoped<CreateCompanyHandler>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
