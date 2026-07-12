@@ -11,4 +11,8 @@ public interface ICompanyRepository
     Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken);
 
     Task SaveChangesAsync(CancellationToken cancellationToken);
+
+    Task<List<Company>> GetAllAsync(CancellationToken cancellationToken);
+    void Update(Company company);
+    void Remove(Company company);
 }

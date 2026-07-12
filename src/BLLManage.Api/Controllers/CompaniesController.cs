@@ -1,4 +1,5 @@
-﻿using BLLManage.Application.Companies.CreateCompany;
+﻿using BLLManage.Application.Features.Companies.Create;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BLLManage.Api.Controllers;
@@ -7,18 +8,18 @@ namespace BLLManage.Api.Controllers;
 [Route("api/companies")]
 public sealed class CompaniesController : ControllerBase
 {
-    private readonly CreateCompanyHandler _handler;
+    private readonly IMediator _mediator;
 
-    public CompaniesController(CreateCompanyHandler handler)
+    public CompaniesController(IMediator mediator)
     {
-        _handler = handler;
+        _mediator = mediator;
     }
 
     [HttpPost]
-    public IActionResult Create(CreateCompanyCommand command)
+    public async Task<IActionResult> Create(CreateCompanyCommand command)
     {
-        var company = _handler.Handle(command);
+        var id = await _mediator.Send(command);
 
-        return Created($"/api/companies/{company.Id}", company);
+        return Created($"/api/companies/{id}", id);
     }
 }

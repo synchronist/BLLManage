@@ -51,5 +51,16 @@ namespace BLLManage.Domain.Entities
             Phone = phone.Trim();
             MarkAsUpdated();
         }
+        public void Update(
+        string name,
+        string email,
+        string phone)
+        {
+            Name = name;
+            Email = email;
+            Phone = phone;
+
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

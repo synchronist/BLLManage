@@ -18,9 +18,12 @@ public sealed class CompanyRepository : ICompanyRepository
         await _context.Companies.AddAsync(company, cancellationToken);
     }
 
-    public async Task<Company?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Company?> GetByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken)
     {
         return await _context.Companies
+            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
@@ -33,5 +36,21 @@ public sealed class CompanyRepository : ICompanyRepository
     public async Task SaveChangesAsync(CancellationToken cancellationToken)
     {
         await _context.SaveChangesAsync(cancellationToken);
+    }
+    public async Task<List<Company>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        return await _context.Companies
+            .AsNoTracking()
+            .OrderBy(x => x.Name)
+            .ToListAsync(cancellationToken);
+    }
+
+    public void Update(Company company)
+    {
+        _context.Companies.Update(company);
+    }
+    public void Remove(Company company)
+    {
+        _context.Companies.Remove(company);
     }
 }

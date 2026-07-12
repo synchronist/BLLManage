@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
 
-namespace BLLManage.Application.Features.Companies.Create
-{
-    internal class CreateCompanyCommand
-    {
-    }
-}
+namespace BLLManage.Application.Features.Companies.Create;
+
+public sealed record CreateCompanyCommand(
+    string Name,
+    string Email,
+    string Phone
+) : IRequest<Guid>;
