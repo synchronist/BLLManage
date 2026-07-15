@@ -1,9 +1,12 @@
+using BLLManage.Api.Middlewares;
+using BLLManage.Application.Behaviors;
 using BLLManage.Application.Features.Companies.Create;
 using BLLManage.Application.Features.Companies.Delete;
 using BLLManage.Application.Features.Companies.GetAll;
 using BLLManage.Application.Features.Companies.GetById;
 using BLLManage.Application.Features.Companies.Update;
 using BLLManage.Infrastructure;
+using FluentValidation;
 using MediatR;
 using System.Reflection;
 
@@ -19,6 +22,11 @@ builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(CreateCompanyCommandHandler).Assembly);
 });
+builder.Services.AddValidatorsFromAssemblyContaining<CreateCompanyValidator>();
+
+builder.Services.AddTransient(
+    typeof(IPipelineBehavior<,>),
+    typeof(ValidationBehavior<,>));
 
 
 var app = builder.Build();
@@ -32,7 +40,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.MapPost("/companies",
     async (
         CreateCompanyCommand command,
@@ -44,12 +52,17 @@ app.MapPost("/companies",
         return Results.Created($"/companies/{id}", id);
     });
 
-app.MapGet("/companies", async (IMediator mediator) =>
-{
-    var companies = await mediator.Send(new GetAllCompaniesQuery());
+app.MapGet("/companies",
+    async (
+        int page,
+        int pageSize,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(
+            new GetAllCompaniesQuery(page, pageSize));
 
-    return Results.Ok(companies);
-});
+        return Results.Ok(result);
+    });
 
 app.MapGet("/companies/{id:guid}", async (
     Guid id,

@@ -1,5 +1,6 @@
 ﻿using BLLManage.Application.Interfaces;
 using BLLManage.Domain.Entities;
+using BLLManage.Domain.Exceptions;
 using MediatR;
 
 
@@ -20,7 +21,7 @@ public sealed class CreateCompanyCommandHandler
         CancellationToken cancellationToken)
     {
         if (await _repository.ExistsByEmailAsync(request.Email, cancellationToken))
-            throw new InvalidOperationException("Company email already exists.");
+            throw new DomainException("Company email already exists.");
 
         var company = new Company(
             request.Name,
