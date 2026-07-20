@@ -8,12 +8,20 @@ using BLLManage.Application.Features.Companies.Update;
 using BLLManage.Infrastructure;
 using FluentValidation;
 using MediatR;
+using Serilog;
 using System.Reflection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
 // Services
-builder.Services.AddControllers();
 builder.Services.AddScoped<CreateCompanyCommandHandler>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -39,7 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.MapControllers();
+app.UseSerilogRequestLogging();
 app.UseMiddleware<ExceptionMiddleware>();
 app.MapPost("/companies",
     async (
