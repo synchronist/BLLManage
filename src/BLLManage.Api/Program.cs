@@ -25,6 +25,10 @@ builder.Host.UseSerilog();
 builder.Services.AddScoped<CreateCompanyCommandHandler>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services
+    .AddHealthChecks()
+    .AddNpgSql(
+        builder.Configuration.GetConnectionString("DefaultConnection")!);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddMediatR(cfg =>
 {
@@ -49,6 +53,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 app.UseMiddleware<ExceptionMiddleware>();
+app.MapHealthChecks("/health");
 app.MapPost("/companies",
     async (
         CreateCompanyCommand command,
