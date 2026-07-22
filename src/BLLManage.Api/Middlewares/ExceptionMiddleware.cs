@@ -48,6 +48,17 @@ public sealed class ExceptionMiddleware
                 Status = StatusCodes.Status400BadRequest
             });
         }
+        catch (UnauthorizedAccessException ex)
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+            await context.Response.WriteAsJsonAsync(new ProblemDetails
+            {
+                Title = "Unauthorized",
+                Detail = ex.Message,
+                Status = StatusCodes.Status401Unauthorized
+            });
+        }
         catch (Exception ex)
         {
             _logger.LogError(

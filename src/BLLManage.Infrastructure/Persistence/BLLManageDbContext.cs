@@ -12,6 +12,7 @@ public sealed class BLLManageDbContext : DbContext
     }
 
     public DbSet<Company> Companies => Set<Company>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

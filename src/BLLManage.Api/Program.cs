@@ -1,5 +1,6 @@
 using BLLManage.Api.Middlewares;
 using BLLManage.Application.Behaviors;
+using BLLManage.Application.Features.Authentication.Login;
 using BLLManage.Application.Features.Companies.Create;
 using BLLManage.Application.Features.Companies.Delete;
 using BLLManage.Application.Features.Companies.GetAll;
@@ -126,7 +127,9 @@ app.MapGet("/companies",
             new GetAllCompaniesQuery(page, pageSize));
 
         return Results.Ok(result);
-    });
+    }).RequireAuthorization()
+      .WithTags("Companies");
+      
 
 app.MapGet("/companies/{id:guid}", async (
     Guid id,
@@ -162,5 +165,15 @@ app.MapDelete("/companies/{id:guid}", async (
     return Results.NoContent();
 })
 .WithName("DeleteCompany");
+
+app.MapPost("/login",
+    async (
+        LoginCommand command,
+        IMediator mediator) =>
+    {
+        var response = await mediator.Send(command);
+
+        return Results.Ok(response);
+    }).WithTags("Authentication");
 
 app.Run();

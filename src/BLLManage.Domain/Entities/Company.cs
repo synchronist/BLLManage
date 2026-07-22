@@ -62,5 +62,6 @@ namespace BLLManage.Domain.Entities
 
             UpdatedAt = DateTime.UtcNow;
         }
+        public ICollection<User> Users { get; private set; } = new List<User>();
     }
 }
